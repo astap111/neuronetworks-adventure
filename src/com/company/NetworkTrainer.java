@@ -1,17 +1,18 @@
 package com.company;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 public class NetworkTrainer {
     private NeuroNetwork net;
     private LinkedList<TrainingEntry> trainingSet;
 
-    public void train(int times) {
+    public void batchTrain(int times) {
         for (int i = 0; i < times; i++) {
             double squareError = 0;
             for (TrainingEntry trainingEntry : trainingSet) {
                 setInput(trainingEntry.getInput());
-                calculateNetwork();
+                net.calculateNetwork();
                 System.out.print("Exp:" + trainingEntry.getOutput()[0] + " ");
                 System.out.println("Calc:" + net.getNeuronsLayers().getLast().getNeurons().getFirst().getSigmoidValue() + " ");
                 squareError += calculateSquareError(trainingEntry);
@@ -23,10 +24,24 @@ public class NetworkTrainer {
         }
     }
 
+    public void stochasticTrain(int times) {
+        for (int i = 0; i < times; i++) {
+            TrainingEntry trainingEntry = trainingSet.get((int) Math.round(new Random().nextDouble() * (trainingSet.size() - 1)));
+            setInput(trainingEntry.getInput());
+            net.calculateNetwork();
+            System.out.print("Exp:" + trainingEntry.getOutput()[0] + " ");
+            System.out.println("Calc:" + net.getNeuronsLayers().getLast().getNeurons().getFirst().getSigmoidValue() + " ");
+            backPropagation(trainingEntry);
+            setNewWeights();
+            System.out.println("Error:" + calculateSquareError(trainingEntry));
+            System.out.println();
+        }
+    }
+
     private double calculateSquareError(TrainingEntry trainingEntry) {
         double realOutput = net.getNeuronsLayers().getLast().getNeurons().getFirst().getSigmoidValue();
         double expectedOutput = trainingEntry.getOutput()[0];
-        return Math.pow(realOutput - expectedOutput, 2);
+        return Math.pow(realOutput - expectedOutput, 2) / 2;
     }
 
     private void setInput(double[] input) {
@@ -37,19 +52,6 @@ public class NetworkTrainer {
         }
     }
 
-    private void calculateNetwork() {
-        for (int i = 1; i < net.getNeuronsLayers().size(); i++) {
-            NeuronsLayer neuronsLayer = net.getNeuronsLayers().get(i);
-            for (Neuron neuron : neuronsLayer.getNeurons()) {
-                double calculatedValue = 0;
-                for (Synapse synapse : neuron.getInputSynapses()) {
-                    calculatedValue += synapse.getFrom().getSigmoidValue() * synapse.getWeight();
-                }
-                neuron.setValue(calculatedValue);
-                neuron.setSigmoidValue(sigmoid(calculatedValue));
-            }
-        }
-    }
 
     private void backPropagation(TrainingEntry trainingEntry) {
         //Result level
@@ -112,7 +114,7 @@ public class NetworkTrainer {
     }
 
     public static void main(String... args) {
-        System.out.println(sigmoid(0.8365));
+        System.out.println(sigmoid(0.3775));
     }
 
     public NeuroNetwork getNet() {

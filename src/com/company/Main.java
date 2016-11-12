@@ -6,7 +6,7 @@ import java.util.LinkedList;
 public class Main {
 
     public static void main(String[] args) {
-        NeuroNetwork net = NeuroNetwork.Builder.build(2, 3, 1);
+        NeuroNetwork net = NeuroNetwork.Builder.build(2, 2, 1);
 
         NetworkTrainer trainer = new NetworkTrainer();
         trainer.setNet(net);
@@ -27,7 +27,7 @@ public class Main {
         trainigSet.addAll(Arrays.asList(entry1, entry2, entry3, entry4));
         trainer.setTrainingSet(trainigSet);
 
-        trainer.train(1000);
+        trainer.stochasticTrain(10000000);
 
         System.out.println(net);
     }

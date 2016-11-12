@@ -18,6 +18,24 @@ public class NeuroNetwork {
         this.neuronsLayers = neuronsLayers;
     }
 
+    public void calculateNetwork() {
+        for (int i = 1; i < neuronsLayers.size(); i++) {
+            NeuronsLayer neuronsLayer = neuronsLayers.get(i);
+            for (Neuron neuron : neuronsLayer.getNeurons()) {
+                double calculatedValue = 0;
+                for (Synapse synapse : neuron.getInputSynapses()) {
+                    calculatedValue += synapse.getFrom().getSigmoidValue() * synapse.getWeight();
+                }
+                neuron.setValue(calculatedValue);
+                neuron.setSigmoidValue(sigmoid(calculatedValue));
+            }
+        }
+    }
+
+    private static double sigmoid(double x) {
+        return 1 / (1 + Math.pow(Math.E, (-x)));
+    }
+
     public static class Builder {
         private Builder() {
         }
