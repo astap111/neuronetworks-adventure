@@ -19,6 +19,12 @@ public class NeuroNetwork {
     }
 
     public void calculateNetwork() {
+        //first layer
+        for (Neuron neuron : neuronsLayers.getFirst().getNeurons()) {
+            neuron.setSigmoidValue(neuron.getValue());
+        }
+
+
         for (int i = 1; i < neuronsLayers.size(); i++) {
             NeuronsLayer neuronsLayer = neuronsLayers.get(i);
             for (Neuron neuron : neuronsLayer.getNeurons()) {

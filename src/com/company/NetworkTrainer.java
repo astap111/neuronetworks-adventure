@@ -1,11 +1,16 @@
 package com.company;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.Random;
 
 public class NetworkTrainer {
     private NeuroNetwork net;
     private LinkedList<TrainingEntry> trainingSet;
+    private NumberFormat formatter = new DecimalFormat("#0.00");
+    private double learningRate = 0.7;
+    private double momentum = 0.3;
 
     public void batchTrain(int times) {
         for (int i = 0; i < times; i++) {
@@ -28,6 +33,7 @@ public class NetworkTrainer {
         for (int i = 0; i < times; i++) {
             TrainingEntry trainingEntry = trainingSet.get((int) Math.round(new Random().nextDouble() * (trainingSet.size() - 1)));
             setInput(trainingEntry.getInput());
+            printWeights();
             net.calculateNetwork();
             System.out.print("Exp:" + trainingEntry.getOutput()[0] + " ");
             System.out.println("Calc:" + net.getNeuronsLayers().getLast().getNeurons().getFirst().getSigmoidValue() + " ");
@@ -36,6 +42,20 @@ public class NetworkTrainer {
             System.out.println("Error:" + calculateSquareError(trainingEntry));
             System.out.println();
         }
+    }
+
+    private void printWeights() {
+        for (NeuronsLayer neuronsLayer : net.getNeuronsLayers()) {
+            for (Neuron neuron : neuronsLayer.getNeurons()) {
+                if (neuron.getOutputSynapses() != null && !neuron.getOutputSynapses().isEmpty()) {
+                    for (Synapse synapse : neuron.getOutputSynapses()) {
+                        System.out.print(formatter.format(synapse.getWeight()) + " ");
+                    }
+                    System.out.print(" ");
+                }
+            }
+        }
+        System.out.println();
     }
 
     private double calculateSquareError(TrainingEntry trainingEntry) {
@@ -60,18 +80,20 @@ public class NetworkTrainer {
         net.getNeuronsLayers().getLast().setDeltaSum(deltaOutputSum);
         for (Neuron neuron : resultNeurons) {
             for (Synapse synapse : neuron.getInputSynapses()) {
-                double deltaWeight = deltaOutputSum / synapse.getTo().getSigmoidValue();
+                double gradient = deltaOutputSum * synapse.getFrom().getSigmoidValue();
+                double deltaWeight = deltaOutputSum / synapse.getFrom().getSigmoidValue();
                 synapse.setCalculatedWeight(synapse.getWeight() + deltaWeight);
             }
         }
 
         //Other levels
-        for (int i = (net.getNeuronsLayers().size() - 2); i >= 0; i--) {
+        for (int i = (net.getNeuronsLayers().size() - 2); i > 0; i--) {
             for (Neuron neuron : net.getNeuronsLayers().get(i).getNeurons()) {
                 double deltaHiddenSum = deltaHiddenSum(net.getNeuronsLayers().get(i + 1), neuron);
-                net.getNeuronsLayers().get(i).setDeltaSum(deltaHiddenSum);
+                neuron.setDeltaHiddenSum(deltaHiddenSum);
                 for (Synapse synapse : neuron.getInputSynapses()) {
-                    synapse.setCalculatedWeight(synapse.getWeight() + deltaHiddenSum);
+                    double gradient = deltaHiddenSum * synapse.getFrom().getSigmoidValue();
+                    synapse.setCalculatedWeight(synapse.getWeight() + deltaHiddenSum / synapse.getFrom().getValue());
                 }
             }
         }
@@ -91,15 +113,15 @@ public class NetworkTrainer {
 
     private double deltaOutputSum(double[] trainingOutput) {
         LinkedList<Neuron> resultNeurons = net.getNeuronsLayers().getLast().getNeurons();
-        //to simplify -  for one output network
+        //to simplify -  for single-output network
         double error = trainingOutput[0] - resultNeurons.getFirst().getSigmoidValue();
-        return sigmoidPrime(resultNeurons.getFirst().getValue()) * error;
+        return -sigmoidPrime(resultNeurons.getFirst().getValue()) * error;
     }
 
     private double deltaHiddenSum(NeuronsLayer neuronsLayer, Neuron neuron) {
         double deltaHiddenSum = 0;
         for (Synapse synapse : neuron.getOutputSynapses()) {
-            deltaHiddenSum += (neuronsLayer.getDeltaSum() / synapse.getCalculatedWeight()) * sigmoidPrime(neuron.getSigmoidValue());
+            deltaHiddenSum += sigmoidPrime(neuron.getValue() * synapse.getWeight() * neuronsLayer.getDeltaSum());
         }
 
         return deltaHiddenSum;
@@ -114,7 +136,7 @@ public class NetworkTrainer {
     }
 
     public static void main(String... args) {
-        System.out.println(sigmoid(0.3775));
+        System.out.println(sigmoidPrime(1));
     }
 
     public NeuroNetwork getNet() {

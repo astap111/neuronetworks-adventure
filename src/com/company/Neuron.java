@@ -7,6 +7,7 @@ public class Neuron {
     private double sigmoidValue;
     private LinkedList<Synapse> inputSynapses = new LinkedList<>();
     private LinkedList<Synapse> outputSynapses = new LinkedList<>();
+    private double deltaHiddenSum;
 
     public double getValue() {
         return value;
@@ -38,5 +39,13 @@ public class Neuron {
 
     public void setOutputSynapses(LinkedList<Synapse> outputSynapses) {
         this.outputSynapses = outputSynapses;
+    }
+
+    public void setDeltaHiddenSum(double deltaHiddenSum) {
+        this.deltaHiddenSum = deltaHiddenSum;
+    }
+
+    public double getDeltaHiddenSum() {
+        return deltaHiddenSum;
     }
 }
