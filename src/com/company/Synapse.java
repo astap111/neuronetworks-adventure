@@ -5,6 +5,7 @@ public class Synapse {
     private Neuron to;
     private double weight;
     private double calculatedWeight;
+    private double deltaWeight;
 
     public Neuron getFrom() {
         return from;
@@ -36,5 +37,13 @@ public class Synapse {
 
     public void setCalculatedWeight(double calculatedWeight) {
         this.calculatedWeight = calculatedWeight;
+    }
+
+    public double getDeltaWeight() {
+        return deltaWeight;
+    }
+
+    public void setDeltaWeight(double deltaWeight) {
+        this.deltaWeight = deltaWeight;
     }
 }

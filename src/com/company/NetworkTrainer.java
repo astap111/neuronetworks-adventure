@@ -81,8 +81,9 @@ public class NetworkTrainer {
         for (Neuron neuron : resultNeurons) {
             for (Synapse synapse : neuron.getInputSynapses()) {
                 double gradient = deltaOutputSum * synapse.getFrom().getSigmoidValue();
-                double deltaWeight = deltaOutputSum / synapse.getFrom().getSigmoidValue();
+                double deltaWeight = learningRate * gradient + momentum * synapse.getDeltaWeight();
                 synapse.setCalculatedWeight(synapse.getWeight() + deltaWeight);
+                synapse.setDeltaWeight(deltaWeight);
             }
         }
 
@@ -93,7 +94,9 @@ public class NetworkTrainer {
                 neuron.setDeltaHiddenSum(deltaHiddenSum);
                 for (Synapse synapse : neuron.getInputSynapses()) {
                     double gradient = deltaHiddenSum * synapse.getFrom().getSigmoidValue();
-                    synapse.setCalculatedWeight(synapse.getWeight() + deltaHiddenSum / synapse.getFrom().getValue());
+                    double deltaWeight = learningRate * gradient + momentum * synapse.getDeltaWeight();
+                    synapse.setCalculatedWeight(synapse.getWeight() + deltaWeight);
+                    synapse.setDeltaWeight(deltaWeight);
                 }
             }
         }
