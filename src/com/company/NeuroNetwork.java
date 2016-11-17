@@ -65,6 +65,15 @@ public class NeuroNetwork {
                         }
                     }
                 }
+                //Bias
+                if (layerNum < layerQuantities.length - 1) {
+                    net.getNeuronsLayers().get(layerNum).getNeurons().add(new Neuron() {
+                        @Override
+                        public void setSigmoidValue(double sigmoidValue) {
+                            super.setSigmoidValue(1);
+                        }
+                    });
+                }
             }
             return net;
         }
