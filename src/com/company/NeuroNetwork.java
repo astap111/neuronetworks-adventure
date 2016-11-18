@@ -68,9 +68,17 @@ public class NeuroNetwork {
                 //Bias
                 if (layerNum < layerQuantities.length - 1) {
                     net.getNeuronsLayers().get(layerNum).getNeurons().add(new Neuron() {
+                        {
+                            setValue(1);
+                            setSigmoidValue(1);
+                        }
+
                         @Override
                         public void setSigmoidValue(double sigmoidValue) {
-                            super.setSigmoidValue(1);
+                        }
+
+                        @Override
+                        public void setValue(double sigmoidValue) {
                         }
                     });
                 }

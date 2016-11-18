@@ -38,9 +38,9 @@ public class NetworkTrainer {
             System.out.print("Exp:" + trainingEntry.getOutput()[0] + " ");
             System.out.println("Calc:" + formatter.format(net.getNeuronsLayers().getLast().getNeurons().getFirst().getSigmoidValue()) + " ");
             backPropagation(trainingEntry);
-            setNewWeights();
             System.out.println("Error:" + formatter.format(calculateSquareError(trainingEntry)));
             System.out.println();
+            setNewWeights();
         }
     }
 
@@ -66,7 +66,7 @@ public class NetworkTrainer {
 
     private void setInput(double[] input) {
         NeuronsLayer inputLayer = net.getNeuronsLayers().getFirst();
-        for (int i = 0; i < inputLayer.getNeurons().size(); i++) {
+        for (int i = 0; i < input.length; i++) {
             Neuron inputNeuron = inputLayer.getNeurons().get(i);
             inputNeuron.setValue(input[i]);
         }
