@@ -19,7 +19,7 @@ public class NetworkTrainer {
                 setInput(trainingEntry.getInput());
                 net.calculateNetwork();
                 System.out.print("Exp:" + trainingEntry.getOutput()[0] + " ");
-                System.out.println("Calc:" + net.getNeuronsLayers().getLast().getNeurons().getFirst().getSigmoidValue() + " ");
+                System.out.println("Calc:" + formatter.format(net.getNeuronsLayers().getLast().getNeurons().getFirst().getSigmoidValue()));
                 squareError += calculateSquareError(trainingEntry);
                 backPropagation(trainingEntry);
                 setNewWeights();
