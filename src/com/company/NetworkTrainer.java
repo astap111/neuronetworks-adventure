@@ -14,34 +14,41 @@ public class NetworkTrainer {
 
     public void batchTrain(int times) {
         for (int i = 0; i < times; i++) {
+            printWeights();
             double squareError = 0;
             for (TrainingEntry trainingEntry : trainingSet) {
                 setInput(trainingEntry.getInput());
                 net.calculateNetwork();
-                System.out.print("Exp:" + trainingEntry.getOutput()[0] + " ");
-                System.out.println("Calc:" + formatter.format(net.getNeuronsLayers().getLast().getNeurons().getFirst().getSigmoidValue()));
+                printComparison(trainingEntry.getOutput()[0], net.getNeuronsLayers().getLast().getNeurons().getFirst().getSigmoidValue());
                 squareError += calculateSquareError(trainingEntry);
                 backPropagation(trainingEntry);
                 setNewWeights();
             }
-            System.out.println("Error:" + squareError);
-            System.out.println();
+            printError(squareError);
         }
     }
 
     public void stochasticTrain(int times) {
         for (int i = 0; i < times; i++) {
+            printWeights();
             TrainingEntry trainingEntry = trainingSet.get((int) Math.round(new Random().nextDouble() * (trainingSet.size() - 1)));
             setInput(trainingEntry.getInput());
-            printWeights();
             net.calculateNetwork();
-            System.out.print("Exp:" + trainingEntry.getOutput()[0] + " ");
-            System.out.println("Calc:" + formatter.format(net.getNeuronsLayers().getLast().getNeurons().getFirst().getSigmoidValue()) + " ");
+            printComparison(trainingEntry.getOutput()[0], net.getNeuronsLayers().getLast().getNeurons().getFirst().getSigmoidValue());
             backPropagation(trainingEntry);
-            System.out.println("Error:" + formatter.format(calculateSquareError(trainingEntry)));
-            System.out.println();
+            printError(calculateSquareError(trainingEntry));
             setNewWeights();
         }
+    }
+
+    private void printError(double error) {
+        System.out.println("Error:" + formatter.format(error));
+        System.out.println();
+    }
+
+    private void printComparison(double expected, double result) {
+        System.out.print("Exp:" + formatter.format(expected) + " ");
+        System.out.println("Res:" + formatter.format(result));
     }
 
     private void printWeights() {

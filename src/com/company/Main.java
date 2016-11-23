@@ -27,8 +27,6 @@ public class Main {
         trainigSet.addAll(Arrays.asList(entry1, entry2, entry3, entry4));
         trainer.setTrainingSet(trainigSet);
 
-        trainer.stochasticTrain(1000000);
-
-        System.out.println(net);
+        trainer.batchTrain(100000);
     }
 }
