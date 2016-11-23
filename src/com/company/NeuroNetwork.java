@@ -73,12 +73,14 @@ public class NeuroNetwork {
                             setSigmoidValue(1);
                         }
 
-                        @Override
-                        public void setSigmoidValue(double sigmoidValue) {
+
+                        public double getSigmoidValue() {
+                            return 1;
                         }
 
                         @Override
-                        public void setValue(double sigmoidValue) {
+                        public double getValue() {
+                            return 1;
                         }
                     });
                 }

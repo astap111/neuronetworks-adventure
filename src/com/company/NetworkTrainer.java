@@ -47,8 +47,8 @@ public class NetworkTrainer {
     private void printWeights() {
         for (NeuronsLayer neuronsLayer : net.getNeuronsLayers()) {
             for (Neuron neuron : neuronsLayer.getNeurons()) {
-                if (neuron.getOutputSynapses() != null && !neuron.getOutputSynapses().isEmpty()) {
-                    for (Synapse synapse : neuron.getOutputSynapses()) {
+                if (neuron.getInputSynapses() != null && !neuron.getInputSynapses().isEmpty()) {
+                    for (Synapse synapse : neuron.getInputSynapses()) {
                         System.out.print(formatter.format(synapse.getWeight()) + " ");
                     }
                     System.out.print(" ");
